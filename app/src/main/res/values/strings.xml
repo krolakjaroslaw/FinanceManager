@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FinanceManager</string>
+    <string name="summary_text">Summary:</string>
 </resources>
