@@ -2,16 +2,22 @@ package com.jk.prm.financemanager.adapter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.jk.prm.financemanager.*
+import com.jk.prm.financemanager.database.PaymentDatabase
 import com.jk.prm.financemanager.databinding.PaymentItemBinding
 import com.jk.prm.financemanager.model.Payment
 
 class PaymentItemAdapter(
-    private var items: MutableList<Payment>,
+    private val db: PaymentDatabase,
     private var callback: OnClickListener
 ) : RecyclerView.Adapter<PaymentItemViewHolder>() {
+    var items: List<Payment> = emptyList()
+    private val main = HandlerCompat.createAsync(Looper.getMainLooper())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaymentItemViewHolder {
         return PaymentItemBinding.inflate(
@@ -36,7 +42,7 @@ class PaymentItemAdapter(
                 .setCancelable(false)
                 .setNegativeButton("NO") { dialog, _ -> dialog.dismiss() }
                 .setPositiveButton("YES") { dialog, _ ->
-                    callback.onLongClick(it.context, item)
+                    callback.onLongClick(it.context, holder)
                     dialog.dismiss()
                 }
             dialog.show()
@@ -46,8 +52,28 @@ class PaymentItemAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    fun load() {
+        // TODO
+//        val cursor = db.payments.getAll()
+//        items = generateSequence { if (cursor.moveToNext()) cursor else null }
+//            .map { getStringFromCursor(it) }
+//            .toList()
+//            .map { it.toModel() }
+        items = db.payments.getAll()
+            .sortedByDescending { it.date }
+            .map { it.toModel() }
+        main.post {
+            notifyDataSetChanged()
+        }
+    }
+
+    fun deleteItem(position: Int) {
+        val item = items[position]
+        db.payments.deleteById(item.id)
+    }
+
     interface OnClickListener {
         fun onClick(context: Context, item: Payment)
-        fun onLongClick(context: Context, item: Payment)
+        fun onLongClick(context: Context, holder: PaymentItemViewHolder)
     }
 }

@@ -1,75 +1,128 @@
 package com.jk.prm.financemanager
 
-import android.app.AlertDialog
+import android.app.Activity
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jk.prm.financemanager.adapter.PaymentItemAdapter
+import com.jk.prm.financemanager.adapter.PaymentItemViewHolder
+import com.jk.prm.financemanager.database.PaymentDatabase
 import com.jk.prm.financemanager.databinding.ActivityMainBinding
-import com.jk.prm.financemanager.model.Amount
 import com.jk.prm.financemanager.model.Payment
+import com.jk.prm.financemanager.utils.Converter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
+
+private const val REQUEST_EDIT_PAYMENT = 1
+private const val REQUEST_SHOW_CHART = 2
+
+private const val AMOUNT = "amount"
+private const val CATEGORY = "category"
+private const val DATE = "date"
+private const val EDIT = "edit"
+private const val ID = "id"
+private const val NAME = "name"
 
 class MainActivity : AppCompatActivity(), PaymentItemAdapter.OnClickListener {
-    private val layoutBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    var mSummary: Amount = Amount(0.0)
-    var mItemList: MutableList<Payment> = mutableListOf()
+    private val view by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val db by lazy { PaymentDatabase.open(this) }
+    private val paymentAdapter by lazy { PaymentItemAdapter(db, this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(layoutBinding.root)
+        setContentView(view.root)
+
         setupPaymentList()
+        setupAddPaymentButton()
+        setupExpensesButton()
+    }
 
-        layoutBinding.addItemBtn.setOnClickListener {
-            val dialog = AlertDialog.Builder(it.context)
-                .setTitle("Add")
-                .setMessage("adding")
-            dialog.show()
+    private fun setupExpensesButton() = view.expensesBtn.setOnClickListener {
+        val intent = Intent(this, ChartActivity::class.java)
+//        val amounts = paymentAdapter.items.map { it.amount.value }.toDoubleArray()
+//        val amounts = paymentAdapter.items.map { it.amount }.toDoubleArray()
+//        val dates = paymentAdapter.items.map { it.date }.toTypedArray()
+//        intent.putExtra("amounts", amounts)
+//        intent.putExtra("dates", dates)
+        intent.putParcelableArrayListExtra("payments", paymentAdapter.items as ArrayList<Payment>)
+        // TODO: refactor to launch()
+        startActivityForResult(
+            intent, REQUEST_SHOW_CHART
+        )
+    }
+
+    private fun setupAddPaymentButton() = view.addItemBtn.setOnClickListener {
+        val intent = Intent(this, EditPaymentActivity::class.java)
+        // TODO: refactor to launch()
+        startActivityForResult(
+            intent, REQUEST_EDIT_PAYMENT
+        )
+    }
+
+    private fun setupPaymentList() = with(view.paymentList) {
+        this.apply {
+            adapter = paymentAdapter
+            layoutManager = LinearLayoutManager(context)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
         refreshData()
-    }
-
-    private fun setupPaymentList() = with(layoutBinding.paymentList) {
-        layoutManager = LinearLayoutManager(this@MainActivity)
+        // TODO: items divider
 //        this.addItemDecoration(
 //                DividerItemDecoration(this@MainActivity, LinearLayoutManager.HORIZONTAL)
 //        )
-        mItemList = mutableListOf(
-            Payment("1 kwi", "Biedronka", "jedzenie", Amount(-100.00)),
-            Payment("2 kwi", "Multikino", "rozrywka", Amount(-50.00)),
-            Payment("3 kwi", "Medicover", "zdrowie", Amount(-150.00)),
-            Payment("4 kwi", "PJATK", "edukacja", Amount(-800.00)),
-            Payment("5 kwi", "Orange", "opłaty", Amount(-50.00)),
-            Payment("6 kwi", "Praca", "wynagrodzenie", Amount(7000.00)),
-            Payment("7 kwi", "Biedronka", "jedzenie", Amount(-100.00)),
-            Payment("8 kwi", "Multikino", "rozrywka", Amount(-50.00)),
-            Payment("9 kwi", "Medicover", "zdrowie", Amount(-150.00)),
-            Payment("10 kwi", "PJATK", "edukacja", Amount(-800.00)),
-            Payment("11 kwi", "Orange", "opłaty", Amount(-50.00))
-        )
-        refreshData()
     }
 
-    private fun refreshData() = with(layoutBinding.paymentList) {
-        mSummary = Amount(0.0)
-        adapter = PaymentItemAdapter(mItemList, this@MainActivity)
-        mItemList.forEach { mSummary.value += it.amount.value }
-        layoutBinding.summaryAmount.text = "$mSummary"
+    private fun refreshData() = thread {
+        paymentAdapter.load()
+
+        runOnUiThread {
+//            val mSummary: Amount = Amount(0.0)
+            var mSummary = 0.0
+//            paymentAdapter.items.forEach { mSummary.value += it.amount.value }
+            val month = Calendar.getInstance().get(Calendar.MONTH)
+            val year = Calendar.getInstance().get(Calendar.YEAR)
+            paymentAdapter.items
+                .filter { Converter.convertToMonthAndYear(it.date!!, "yyyy-MM-dd") == Pair(month, year) }
+//                .filter { convertToMonthAndYear(it.date!!, "yyyy-MM-dd") == Pair(month, year) }
+                .forEach { mSummary += it.amount }
+
+            val summary = String.format("%.2f", mSummary) + " zł"
+            view.summaryAmount.text = summary
+        }
     }
 
     override fun onClick(context: Context, item: Payment) {
-        val dialog = AlertDialog.Builder(context)
-            .setTitle("Edit")
-            .setMessage("editing ${item.amount} ${mItemList.size}")
-        dialog.show()
+        val intent = Intent(this, EditPaymentActivity::class.java)
+        intent.putExtra(EDIT, true)
+        intent.putExtra(ID, item.id)
+        intent.putExtra(NAME, item.name)
+        intent.putExtra(CATEGORY, item.category)
+//        intent.putExtra(AMOUNT, item.amount.value)
+        intent.putExtra(AMOUNT, item.amount)
+        intent.putExtra(DATE, item.date)
+
+        // TODO: refactor to launch()
+        startActivityForResult(
+            intent, REQUEST_EDIT_PAYMENT
+        )
     }
 
-    override fun onLongClick(context: Context, item: Payment) {
-        mItemList.remove(item)
-        refreshData()
+    override fun onLongClick(context: Context, holder: PaymentItemViewHolder) {
+        thread {
+            paymentAdapter.deleteItem(holder.layoutPosition)
+            refreshData()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if ((requestCode == REQUEST_EDIT_PAYMENT || requestCode == REQUEST_SHOW_CHART) &&
+            resultCode == Activity.RESULT_OK
+        ) {
+            refreshData()
+            // TODO: refactor to launch()
+        } else super.onActivityResult(requestCode, resultCode, data)
     }
 }

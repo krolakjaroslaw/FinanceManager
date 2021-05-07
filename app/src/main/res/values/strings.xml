@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">FinanceManager</string>
+
+    <string name="add_btn_text">add_btn</string>
+    <string name="amount_value_text">0.00 PLN</string>
+    <string name="balance_text">Show Balance</string>
+    <string name="logo_img_text">logo_img</string>
     <string name="summary_text">Summary:</string>
+
+    <string name="category_text">Category</string>
+    <string name="date_text">Date</string>
+    <string name="item_image_text">item_image</string>
+    <string name="name_text">Name</string>
+
+    <string name="amount_text">Amount</string>
+    <string name="amount_value_hint_text">50.00</string>
+    <string name="category_hint_text">ex. food</string>
+    <string name="date_hint_text">yyyy-MM-dd</string>
+    <string name="income_text">Income</string>
+    <string name="name_hint_text">ex. Market</string>
+    <string name="save_btn_text">Save</string>
+    <string name="share_btn_text">share_btn</string>
+    <string name="title_text">Add new payment</string>
 </resources>

@@ -8,8 +8,10 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
         <TextView
             android:id="@+id/item_date"
@@ -17,15 +19,16 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="TextView"
+            android:text="@string/date_text"
             android:textAlignment="center"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/item_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
+            android:contentDescription="@string/item_image_text"
             android:scaleX="0.5"
             android:scaleY="0.5"
             app:srcCompat="@drawable/payment_out" />
@@ -35,9 +38,10 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="6"
+        android:layout_weight="5"
         android:orientation="vertical"
-        android:paddingStart="16dp">
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
         <TextView
             android:id="@+id/item_name"
@@ -45,7 +49,7 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:gravity="bottom|start"
-            android:text="TextView"
+            android:text="@string/name_text"
             android:textAlignment="textStart"
             android:textSize="24sp" />
 
@@ -55,7 +59,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="start|top"
-            android:text="TextView"
+            android:text="@string/category_text"
             android:textAlignment="textStart"
             android:textSize="16sp" />
     </LinearLayout>
@@ -64,18 +68,18 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
         <TextView
             android:id="@+id/item_amount"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:gravity="center_vertical|end"
-            android:paddingEnd="8dp"
-            android:text="TextView"
+            android:text="@string/amount_value_text"
             android:textAlignment="textEnd"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
