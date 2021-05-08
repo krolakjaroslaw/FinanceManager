@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditPaymentActivity">
+    tools:context=".activity.EditPaymentActivity">
 
     <TextView
         android:id="@+id/title_text"
@@ -107,7 +107,7 @@
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/amount_value_hint_text"
-        android:inputType="textPersonName"
+        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/type_switch" />
 
@@ -134,20 +134,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/share_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:clickable="true"
-        android:contentDescription="@string/share_btn_text"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date"
-        app:maxImageSize="40dp"
-        app:srcCompat="@drawable/ic_baseline_share"
-        app:tint="#FFFFFF" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

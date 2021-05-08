@@ -1,7 +1,10 @@
 package com.jk.prm.financemanager.custom
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.marginBottom
@@ -12,7 +15,7 @@ import kotlin.math.abs
 
 class ChartView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
-    private val yAxeMargin = 130F
+    private val yAxeMargin = 175F
     private val widthPadding = 50F
     private val heightPadding = 10
     private var paint = Paint().apply {
@@ -28,8 +31,6 @@ class ChartView(context: Context, attrs: AttributeSet? = null) : View(context, a
     private var vectorLength = 2
 
     fun setParams(xArr: IntArray, yArr: DoubleArray) {
-//        println("params: ${xArr.size}")
-//        println("params: ${yArr.size}")
         xValues = xArr
         yValues = yArr
         yMax =
@@ -74,30 +75,30 @@ class ChartView(context: Context, attrs: AttributeSet? = null) : View(context, a
     }
 
     private fun drawAxesDescription(canvas: Canvas?, xStep: Float, yZero: Float, ySize: Float) {
+        paint.textAlign = Paint.Align.RIGHT
         // xAxe
         val stepH = vectorLength / 11 + 1
 
-        var i = 0
+        var i = 1
         while (i < vectorLength) {
             canvas?.drawText("${i + 1}", yAxeMargin + xStep * i, yZero + 50F, paint)
             i += stepH
         }
 
         //yAxe
-        val stepV = 100 * (ySize.toInt() / 2000 + 1)
-        canvas?.drawText("0", 0F, yZero, paint)
+        val stepV = 25 * (ySize.toInt() / 500 + 1)
         val yStep = stepV / ySize * (height - heightPadding)
         var j = 0
         while (j * stepV <= abs(yMax)) {
-            canvas?.drawText("${stepV * j}", 0F, yZero - yStep * j, paint)
+            canvas?.drawText("${stepV * j}zł", yAxeMargin - 10F, yZero - yStep * j, paint)
             j++
         }
         j = 0
         while (j * stepV <= abs(yMin)) {
-            canvas?.drawText("${stepV * j * -1}", 0F, yZero + yStep * j, paint)
+            canvas?.drawText("${stepV * j * -1}zł", yAxeMargin - 10F, yZero + yStep * j, paint)
             j++
         }
-        canvas?.drawText("zł", yAxeMargin + 25F, 3 * heightPadding.toFloat(), paint)
+        paint.textAlign = Paint.Align.LEFT
     }
 
     private fun drawChart(xStep: Float, ySize: Float, yZero: Float, canvas: Canvas?) {
@@ -142,7 +143,5 @@ class ChartView(context: Context, attrs: AttributeSet? = null) : View(context, a
             widthMeasureSpec - marginLeft - marginRight,
             heightMeasureSpec - marginTop - marginBottom
         )
-//        println("margins: $marginLeft $marginRight $marginTop $marginBottom")
-//        println("padding: $paddingLeft $paddingRight $paddingTop $paddingBottom")
     }
 }

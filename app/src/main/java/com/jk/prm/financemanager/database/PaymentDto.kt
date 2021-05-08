@@ -16,9 +16,7 @@ class PaymentDto(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
     var name: String = "",
-    // TODO: not working
-    var category: String = "<no category>",
-//    var amount: String = "",
+    var category: String = "",
     var amount: Double = 0.0,
     var date: String = ""
 ) {
@@ -27,7 +25,6 @@ class PaymentDto(
         id,
         name,
         category,
-//        Amount(amount.toDouble()),
         amount,
         date
     )
@@ -45,7 +42,6 @@ class PaymentDto(
                 payment.category = values.getAsString(COLUMN_CATEGORY)
             }
             if (values != null && values.containsKey(COLUMN_AMOUNT)) {
-//                payment.amount = values.getAsString(COLUMN_AMOUNT)
                 payment.amount = values.getAsDouble(COLUMN_AMOUNT)
             }
             if (values != null && values.containsKey(COLUMN_DATE)) {

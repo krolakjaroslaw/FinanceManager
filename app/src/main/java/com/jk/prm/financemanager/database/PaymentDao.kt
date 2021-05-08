@@ -1,7 +1,9 @@
 package com.jk.prm.financemanager.database
 
 import android.database.Cursor
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 
 @Dao
 interface PaymentDao {
@@ -12,7 +14,7 @@ interface PaymentDao {
     fun getAllContentProvider(): Cursor
 
     @Query("SELECT * FROM payment WHERE id = :id")
-    fun getById(id: Long) : Cursor
+    fun getById(id: Long): Cursor
 
     @Insert
     fun insert(payment: PaymentDto): Long
@@ -21,6 +23,5 @@ interface PaymentDao {
     fun deleteById(id: Long): Int
 
     @Query("UPDATE payment SET name = :name, category = :category, amount = :amount, date = :date WHERE id = :id")
-//    fun updateById(id: Long, name: String, category: String, amount: String, date: String): Int
     fun updateById(id: Long, name: String, category: String, amount: Double, date: String): Int
 }

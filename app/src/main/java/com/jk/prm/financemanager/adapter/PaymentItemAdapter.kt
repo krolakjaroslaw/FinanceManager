@@ -53,12 +53,6 @@ class PaymentItemAdapter(
     override fun getItemCount(): Int = items.size
 
     fun load() {
-        // TODO
-//        val cursor = db.payments.getAll()
-//        items = generateSequence { if (cursor.moveToNext()) cursor else null }
-//            .map { getStringFromCursor(it) }
-//            .toList()
-//            .map { it.toModel() }
         items = db.payments.getAll()
             .sortedByDescending { it.date }
             .map { it.toModel() }

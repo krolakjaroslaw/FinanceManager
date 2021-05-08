@@ -1,14 +1,15 @@
-package com.jk.prm.financemanager
+package com.jk.prm.financemanager.activity
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.jk.prm.financemanager.R
 import com.jk.prm.financemanager.database.PaymentDatabase
 import com.jk.prm.financemanager.database.PaymentDto
 import com.jk.prm.financemanager.databinding.ActivityEditPaymentBinding
@@ -38,7 +39,6 @@ class EditPaymentActivity : AppCompatActivity() {
 
         setupPayment()
         setupSave()
-        setupShare()
     }
 
     override fun onDestroy() {
@@ -56,7 +56,6 @@ class EditPaymentActivity : AppCompatActivity() {
             view.name.setText(name)
             view.category.setText(category)
             view.typeSwitch.isChecked = amount > 0
-//            view.amount.setText(amount.toString().substringAfter("-"))
             view.amount.setText(String.format("%.2f", amount).substringAfter("-"))
             view.date.setText(date)
         }
@@ -64,9 +63,7 @@ class EditPaymentActivity : AppCompatActivity() {
 
     private fun setupSave() = view.saveBtn.setOnClickListener {
         if (!isValid()) return@setOnClickListener
-//        var amountValue = view.amount.text.toString()
         var amountValue = view.amount.text.toString().toDouble()
-//        if (!view.typeSwitch.isChecked) amountValue = (amountValue.toDouble() * -1).toString()
         if (!view.typeSwitch.isChecked) amountValue = (amountValue * -1)
 
         val paymentDto = PaymentDto(
@@ -88,23 +85,6 @@ class EditPaymentActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK)
             finish()
         }
-    }
-
-    private fun setupShare() = view.shareBtn.setOnClickListener {
-        if (!isValid()) return@setOnClickListener
-        val sign: String = if (view.typeSwitch.isChecked) "+" else "-"
-        val content: String = "$NAME: ${view.name.text} \n" +
-                "$CATEGORY: ${view.category.text} \n" +
-                "$AMOUNT: $sign${view.amount.text} \n" +
-                "$DATE: ${view.date.text}"
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, content)
-            type = "text/plain"
-        }
-
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        startActivity(shareIntent)
     }
 
     private fun isValid(): Boolean {
@@ -134,5 +114,32 @@ class EditPaymentActivity : AppCompatActivity() {
         val snackBar: Snackbar = Snackbar.make(view.root, message, length)
         snackBar.setBackgroundTint(Color.RED)
         snackBar.show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.edit_payment_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.share) {
+            if (!isValid()) return false
+            val sign: String = if (view.typeSwitch.isChecked) "+" else "-"
+            val content: String = "$NAME: ${view.name.text} \n" +
+                    "$CATEGORY: ${view.category.text} \n" +
+                    "$AMOUNT: $sign${view.amount.text} \n" +
+                    "$DATE: ${view.date.text}"
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, content)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

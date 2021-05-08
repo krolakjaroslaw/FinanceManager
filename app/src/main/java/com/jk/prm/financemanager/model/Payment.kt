@@ -10,7 +10,7 @@ class Payment(
     val category: String?,
     val amount: Double,
     val date: String?
-): Parcelable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),

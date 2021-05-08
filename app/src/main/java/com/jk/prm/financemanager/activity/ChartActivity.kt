@@ -1,16 +1,16 @@
-package com.jk.prm.financemanager
+package com.jk.prm.financemanager.activity
 
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import com.jk.prm.financemanager.R
 import com.jk.prm.financemanager.databinding.ActivityChartBinding
 import com.jk.prm.financemanager.model.Payment
 import com.jk.prm.financemanager.utils.Converter
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ChartActivity : AppCompatActivity() {
     private val viewBind by lazy { ActivityChartBinding.inflate(layoutInflater) }
@@ -19,8 +19,6 @@ class ChartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(viewBind.root)
 
-//        val amounts = intent.getDoubleArrayExtra("amounts")!!
-//        val dates: Array<String> = intent.getStringArrayExtra("dates")!!
         val payments: ArrayList<Payment> = intent.getParcelableArrayListExtra("payments")!!
 
         setupSpinner(payments)
@@ -47,7 +45,7 @@ class ChartActivity : AppCompatActivity() {
                     val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
                     val (month, year) = Converter.convertToMonthAndYear(
                         months[position],
-                        "yyyy MMMM"
+                        "yyyy-MM (MMMM)"
                     )
 
                     val xValues: IntArray = prepareXValues(id, day, month, year)
@@ -110,7 +108,7 @@ class ChartActivity : AppCompatActivity() {
     private fun setSpinnerItems(dates: List<String>): Array<String> {
         return with(dates) {
             val dateParse = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            val dateDisplay = SimpleDateFormat("yyyy MMMM", Locale.US)
+            val dateDisplay = SimpleDateFormat("yyyy-MM (MMMM)", Locale.US)
             val set: MutableSet<String> = sortedSetOf()
 
             this.map { dateDisplay.format(dateParse.parse(it)!!) }

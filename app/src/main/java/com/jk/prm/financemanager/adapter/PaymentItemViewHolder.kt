@@ -14,7 +14,6 @@ class PaymentItemViewHolder(
     fun bindItem(payment: Payment) {
         with(paymentItemBinding) {
             val amount = String.format("%.2f", payment.amount) + " zł"
-//            if (payment.amount.value > 0) itemImage.setImageResource(R.drawable.payment_in)
             if (payment.amount > 0) itemImage.setImageResource(R.drawable.payment_in)
             else itemImage.setImageResource(R.drawable.payment_out)
 
